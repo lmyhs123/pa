@@ -70,7 +70,7 @@ typedef struct token {
   int type;
   char str[32];
 } Token;
-zr
+
 Token tokens[32];
 int nr_token;
 
@@ -240,9 +240,25 @@ static uint32_t eval(int p, int q, bool *success) {
       *success = true;
       return strtoul(tokens[p].str, NULL, 16);
     }
-    if (tokens[p].type == TK_REG) {
-      *success = true;
-      return isa_reg_str2val(tokens[p].str + 1, success);
+    
+		if (tokens[p].type == TK_REG) {
+        char *reg_name = tokens[p].str + 1; // 指针 +1，跳过开头的 '$' 符号
+        *success = true; // 默认假设匹配成功
+
+        if (strcmp(reg_name, "eax") == 0) return cpu.eax;
+        if (strcmp(reg_name, "ecx") == 0) return cpu.ecx;
+        if (strcmp(reg_name, "edx") == 0) return cpu.edx;
+        if (strcmp(reg_name, "ebx") == 0) return cpu.ebx;
+        if (strcmp(reg_name, "esp") == 0) return cpu.esp;
+        if (strcmp(reg_name, "ebp") == 0) return cpu.ebp;
+        if (strcmp(reg_name, "esi") == 0) return cpu.esi;
+        if (strcmp(reg_name, "edi") == 0) return cpu.edi;
+        if (strcmp(reg_name, "eip") == 0 || strcmp(reg_name, "pc") == 0) return cpu.eip;
+
+        // 如果上述都没匹配中，说明寄存器名字非法
+        printf("Error: Unknown register '%s'\n", reg_name);
+        *success = false; // 标记求值失败
+        return 0;
     }
 
     *success = false;
