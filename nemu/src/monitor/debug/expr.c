@@ -198,10 +198,11 @@ static int precedence(int type) {
 }
 static int dominant_operator(int p, int q) {
   int op = -1;
-  int min_pri = 100;
+  int min_pri = 100; // 设为一个足够大的初始值
   int balance = 0;
 
   for (int i = p; i <= q; i++) {
+    // 1. 记录括号嵌套层数
     if (tokens[i].type == '(') {
       balance++;
       continue;
@@ -211,20 +212,40 @@ static int dominant_operator(int p, int q) {
       continue;
     }
 
+    // 如果 balance 不为 0，说明当前符号在括号内部，绝对不可能是整个表达式的主运算符
     if (balance != 0) continue;
 
     int type = tokens[i].type;
+    // 忽略数字和寄存器，它们不是运算符
     if (type == TK_NUM || type == TK_HEX || type == TK_REG) continue;
 
     int pri = precedence(type);
-    if (pri > 0 && pri <= min_pri) {
-      min_pri = pri;
-      op = i;
+    if (pri > 0) {
+      bool update = false;
+      
+      // 核心修改点：区分左结合与右结合
+      if (pri < min_pri) {
+        // 如果遇到了优先级【严格更低】的，无条件更新为主运算符
+        update = true;
+      } else if (pri == min_pri) {
+        // 如果遇到了优先级【相同】的，需要看结合性
+        // 在你的 precedence 函数中，单目运算符(TK_NEG, TK_DEREF)的优先级是 5
+        // 单目运算符是右结合的（不能更新），而普通的加减乘除是左结合的（需要更新）
+        if (pri != 5) { 
+          update = true;
+        }
+      }
+
+      if (update) {
+        min_pri = pri;
+        op = i;
+      }
     }
   }
 
   return op;
 }
+
 static uint32_t eval(int p, int q, bool *success) {
   if (p > q) {
     *success = false;
@@ -319,10 +340,9 @@ uint32_t expr(char *e, bool *success) {
   }
 
   /* TODO: Insert codes to evaluate the expression. */
-  TODO();
 
-  return 0;
-if (nr_token == 0) {
+
+  if (nr_token == 0) {
     *success = false;
     return 0;
   }
