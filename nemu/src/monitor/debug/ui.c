@@ -51,12 +51,12 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
-  {"si","si [N]",cmd_si},
-  {"info","info r",cmd_info},
-  {"x","x N EXPR",cmd_x},
-  { "p", "p EXPR - evaluate expression", cmd_p },
-  { "w", "w EXPR - set watchpoint", cmd_w },
-  { "d", "d N - delete watchpoint N", cmd_d },
+  {"si","si [N] step N instructions, default 1",cmd_si},
+  {"info","info r print program status, info r for registers, info w for watchpoints",cmd_info},
+  {"x","x N EXPR examine N 4-byte memory units starting at EXPR",cmd_x},
+  { "p", "p EXPR evaluate expression EXPR", cmd_p },
+  { "w", "w EXPR set watchpoint", cmd_w },
+  { "d", "d N delete watchpoint N", cmd_d },
 
   /* TODO: Add more commands */
 
@@ -75,19 +75,15 @@ static int cmd_d(char *args) {
     return 0;
   }
 
-  WP *p = get_head();
-  while (p != NULL) {
-    if (p->NO == no) {
-      free_wp(p);
-      printf("Deleted watchpoint %d\n", no);
-      return 0;
-    }
-    p = p->next;
+  // 优化：直接调用 watchpoint 模块提供的接口，实现 UI 与数据结构的解耦
+  if (delete_wp_by_no(no)) {
+    printf("Deleted watchpoint %d\n", no);
+  } else {
+    printf("No watchpoint %d\n", no);
   }
-
-  printf("No watchpoint %d\n", no);
   return 0;
 }
+
 static int cmd_w(char *args) {
   if (args == NULL) {
     printf("Usage: w EXPR\n");
@@ -102,13 +98,18 @@ static int cmd_w(char *args) {
   }
 
   WP *wp = new_wp();
-  strcpy(wp->expr, args);
+  
+  // 优化：使用 strncpy 替代 strcpy，防止超长表达式导致内存溢出
+  // 假设你的 wp->expr 大小是 32 或更大，这里以 sizeof 为准
+  strncpy(wp->expr, args, sizeof(wp->expr) - 1);
+  wp->expr[sizeof(wp->expr) - 1] = '\0'; // 确保字符串正确结尾
+  
   wp->old_value = val;
 
-  printf("Watchpoint %d: %s = %u (0x%08x)\n",
-         wp->NO, wp->expr, val, val);
+  printf("Watchpoint %d: %s = %u (0x%08x)\n", wp->NO, wp->expr, val, val);
   return 0;
 }
+
 static int cmd_x(char *args) {
   if (args == NULL) {
     printf("Usage: x N EXPR\n");
@@ -116,14 +117,19 @@ static int cmd_x(char *args) {
   }
 
   char *n_str = strtok(args, " ");
-  char *expr_str = strtok(NULL, "");
-
-  if (n_str == NULL || expr_str == NULL) {
+  if (n_str == NULL) {
     printf("Usage: x N EXPR\n");
     return 0;
   }
 
-  while (*expr_str == ' ') expr_str++;
+  // 优化：不使用 strtok(NULL, "")，而是直接通过指针计算定位到后续字符串
+  char *expr_str = n_str + strlen(n_str) + 1;
+  while (*expr_str == ' ') expr_str++; // 跳过前导空格
+
+  if (*expr_str == '\0') {
+    printf("Usage: x N EXPR\n");
+    return 0;
+  }
 
   int n = atoi(n_str);
   if (n <= 0) {
@@ -140,12 +146,14 @@ static int cmd_x(char *args) {
 
   for (int i = 0; i < n; i++) {
     uint32_t addr = start_addr + i * 4;
-    uint32_t data = vaddr_read(addr, 4);
+    // 注意：2017版 PA 通常使用 vaddr_read 获取虚拟地址内存
+    uint32_t data = vaddr_read(addr, 4); 
     printf("0x%08x: 0x%08x\n", addr, data);
   }
 
   return 0;
 }
+
 static int cmd_p(char *args) {
   if (args == NULL) {
     printf("Usage: p EXPR\n");

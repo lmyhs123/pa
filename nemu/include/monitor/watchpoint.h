@@ -19,4 +19,6 @@ bool check_wp(void);
 WP* new_wp(void);
 void free_wp(WP *wp);
 void init_wp_pool(void);
+
+bool delete_wp_by_no(int no);
 #endif

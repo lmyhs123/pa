@@ -120,4 +120,18 @@ WP* get_head(void) {
   return head;
 }
 
+// watchpoint.c 追加以下函数
+
+bool delete_wp_by_no(int no) {
+  WP *p = head;
+  while (p != NULL) {
+    if (p->NO == no) {
+      free_wp(p); // 复用你写好的 free_wp
+      return true;
+    }
+    p = p->next;
+  }
+  return false;
+}
+
 /* TODO: Implement the functionality of watchpoint */
