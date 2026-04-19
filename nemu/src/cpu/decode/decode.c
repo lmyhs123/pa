@@ -38,9 +38,6 @@ static inline make_DopHelper(SI) {
    *
    op->simm = ???
    */
-  TODO();
-
-  rtl_li(&op->val, op->simm);
 
 #ifdef DEBUG
   snprintf(op->str, OP_STR_SIZE, "$0x%x", op->simm);
@@ -268,6 +265,13 @@ make_DHelper(J) {
 
 make_DHelper(push_SI) {
   decode_op_SI(eip, id_dest, true);
+}
+
+make_DHelper(pop_SI) {
+  id_dest->type = OP_TYPE_REG;
+  id_dest->reg = R_ESP;
+  id_dest->width = decoding.is_operand_size_16 ? 2 : 4;
+  rtl_lr(&id_dest->val, R_ESP, id_dest->width);
 }
 
 make_DHelper(in_I2a) {
