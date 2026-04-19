@@ -34,6 +34,10 @@ typedef struct {
 
   vaddr_t eip;
 
+  struct {
+    uint32_t CF, ZF, SF, OF;
+  } eflags;
+
 } CPU_state;
 
 extern CPU_state cpu;
