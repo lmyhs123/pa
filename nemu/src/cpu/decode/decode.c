@@ -31,10 +31,9 @@ static inline make_DopHelper(SI) {
   assert(op->width == 1 || op->width == 4);
 
   op->type = OP_TYPE_IMM;
-
   op->imm = instr_fetch(eip, op->width);
   op->simm = (op->width == 1) ? (int8_t)op->imm : (int32_t)op->imm;
-  rtl_li(&op->val, op->imm);
+  rtl_li(&op->val, op->simm);
 
 #ifdef DEBUG
   snprintf(op->str, OP_STR_SIZE, "$0x%x", op->imm);
@@ -266,9 +265,9 @@ make_DHelper(push_SI) {
 
 make_DHelper(pop_SI) {
   id_dest->type = OP_TYPE_REG;
-  id_dest->reg = R_ESP;
+  id_dest->reg = decoding.opcode & 0x7;
   id_dest->width = decoding.is_operand_size_16 ? 2 : 4;
-  rtl_lr(&id_dest->val, R_ESP, id_dest->width);
+  rtl_lr(&id_dest->val, id_dest->reg, id_dest->width);
 }
 
 make_DHelper(in_I2a) {
