@@ -217,6 +217,7 @@ static make_EHelper(2byte_esc) {
 
 make_EHelper(real) {
   uint32_t opcode = instr_fetch(eip, 1);
+  printf("[EXEC] opcode=0x%02x eip=0x%x\n", opcode, *eip);
   decoding.opcode = opcode;
   set_width(opcode_table[opcode].width);
   idex(eip, &opcode_table[opcode]);
@@ -234,6 +235,9 @@ void exec_wrapper(bool print_flag) {
 
   decoding.seq_eip = cpu.eip;
   exec_real(&decoding.seq_eip);
+
+  printf("[AFTER] seq_eip=0x%08x is_jmp=%d jmp_eip=0x%08x\n",
+         decoding.seq_eip, decoding.is_jmp, decoding.jmp_eip);
 
 #ifdef DEBUG
   int instr_len = decoding.seq_eip - cpu.eip;
