@@ -240,8 +240,8 @@ void exec_wrapper(bool print_flag) {
   decoding.seq_eip = cpu.eip;
   exec_real(&decoding.seq_eip);
 
-  printf("[AFTER] seq_eip=0x%08x is_jmp=%d jmp_eip=0x%08x\n",
-         decoding.seq_eip, decoding.is_jmp, decoding.jmp_eip);
+  fprintf(stderr, "[AFTER] seq_eip=0x%08x is_jmp=%d jmp_eip=0x%08x\n",
+         decoding.seq_eip, decoding.is_jmp, decoding.jmp_eip); fflush(stderr);
 
 #ifdef DEBUG
   int instr_len = decoding.seq_eip - cpu.eip;
