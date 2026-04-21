@@ -38,6 +38,7 @@ static make_EHelper(2byte_esc);
 static make_EHelper(name) { \
   int idx = decoding.ext_opcode; \
   opcode_entry *e = &concat(opcode_table_, name)[idx]; \
+  /* Decode was already done by the parent decode helper. Execute directly. */ \
   e->execute(eip); \
 }
 
