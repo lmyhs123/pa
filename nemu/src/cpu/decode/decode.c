@@ -32,7 +32,9 @@ static inline make_DopHelper(SI) {
 
   op->type = OP_TYPE_IMM;
 
+  printf("DEBUG decode_SI: width=%d eip=0x%x\n", op->width, *eip);
   op->imm = instr_fetch(eip, op->width);
+  printf("DEBUG decode_SI: imm=0x%x after fetch eip=0x%x\n", op->imm, *eip);
   op->simm = (op->width == 1) ? (int8_t)op->imm : (int32_t)op->imm;
   rtl_li(&op->val, op->imm);
 
