@@ -234,6 +234,7 @@ void exec_wrapper(bool print_flag) {
 #endif
 
   decoding.seq_eip = cpu.eip;
+  printf("DEBUG exec: eip=%08x byte=%02x\n", cpu.eip, vaddr_read(cpu.eip, 1));
   exec_real(&decoding.seq_eip);
 
 #ifdef DEBUG
