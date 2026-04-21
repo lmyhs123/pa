@@ -1,8 +1,6 @@
 #include "cpu/exec.h"
 
 make_EHelper(mov) {
-  printf("DEBUG mov: dest_type=%d src_type=%d dest_reg=%d src_reg=%d\n",
-         id_dest->type, id_src->type, id_dest->reg, id_src->reg);
   operand_write(id_dest, &id_src->val);
   print_asm_template2(mov);
 }

@@ -72,10 +72,6 @@ static inline void load_img() {
     assert(ret == 1);
 
     fclose(fp);
-
-    printf("DEBUG load_img: size=%ld bytes at 0x100010: ", size);
-    for (int i = 0; i < 16; i++) printf("%02x ", vaddr_read(ENTRY_START + 0x10 + i, 1));
-    printf("\n");
   }
 
 #ifdef DIFF_TEST
