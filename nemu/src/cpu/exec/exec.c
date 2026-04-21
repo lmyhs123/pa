@@ -36,8 +36,10 @@ static make_EHelper(2byte_esc);
     /* 0x04 */	item4, item5, item6, item7  \
   }; \
 static make_EHelper(name) { \
-  printf("DEBUG gp1: idx=%d opcode=0x%02x\n", decoding.ext_opcode, decoding.opcode); \
-  idex(eip, &concat(opcode_table_, name)[decoding.ext_opcode]); \
+  int idx = decoding.ext_opcode; \
+  printf("DEBUG gp1 START: idx=%d opcode=0x%02x seq_eip=0x%x\n", idx, decoding.opcode, *(uint32_t*)eip); \
+  idex(eip, &concat(opcode_table_, name)[idx]); \
+  printf("DEBUG gp1 END: idx=%d\n", idx); \
 }
 
 /* 0x80, 0x81, 0x83 */
