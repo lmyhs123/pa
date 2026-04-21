@@ -37,10 +37,10 @@ static make_EHelper(2byte_esc);
   }; \
 static make_EHelper(name) { \
   int idx = decoding.ext_opcode; \
-  printf("[GP1] idx=%d\n", idx); \
+  fprintf(stderr, "[GP1] idx=%d\n", idx); fflush(stderr); \
   opcode_entry *e = &concat(opcode_table_, name)[idx]; \
   /* Decode was already done by the parent decode helper. Execute directly. */ \
-  printf("[GP1] calling execute %p\n", (void*)e->execute); \
+  fprintf(stderr, "[GP1] calling execute %p\n", (void*)e->execute); fflush(stderr); \
   e->execute(eip); \
 }
 
@@ -221,7 +221,7 @@ static make_EHelper(2byte_esc) {
 
 make_EHelper(real) {
   uint32_t opcode = instr_fetch(eip, 1);
-  printf("[EXEC] opcode=0x%02x eip=0x%x\n", opcode, *eip);
+  fprintf(stderr, "[EXEC] opcode=0x%02x eip=0x%x\n", opcode, *eip); fflush(stderr);
   decoding.opcode = opcode;
   set_width(opcode_table[opcode].width);
   idex(eip, &opcode_table[opcode]);
