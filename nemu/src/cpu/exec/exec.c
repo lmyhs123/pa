@@ -37,8 +37,10 @@ static make_EHelper(2byte_esc);
   }; \
 static make_EHelper(name) { \
   int idx = decoding.ext_opcode; \
+  printf("[GP1] idx=%d\n", idx); \
   opcode_entry *e = &concat(opcode_table_, name)[idx]; \
   /* Decode was already done by the parent decode helper. Execute directly. */ \
+  printf("[GP1] calling execute %p\n", (void*)e->execute); \
   e->execute(eip); \
 }
 
