@@ -232,10 +232,10 @@ void exec_wrapper(bool print_flag) {
 #endif
 
   decoding.seq_eip = cpu.eip;
-  uint32_t dbg_eip = cpu.eip;
-  uint8_t b = vaddr_read(dbg_eip, 1);
-  printf("DEBUG exec: eip=%08x byte=%02x\n", dbg_eip, b);
   exec_real(&decoding.seq_eip);
+
+  printf("DEBUG after exec: seq_eip=%08x is_jmp=%d jmp_eip=%08x\n",
+         decoding.seq_eip, decoding.is_jmp, decoding.jmp_eip);
 
 #ifdef DEBUG
   int instr_len = decoding.seq_eip - cpu.eip;
