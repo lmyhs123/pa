@@ -222,7 +222,7 @@ make_EHelper(real) {
   printf("DEBUG real: opcode=0x%02x eip after fetch=0x%x\n", opcode, *eip);
   decoding.opcode = opcode;
   set_width(opcode_table[opcode].width);
-  printf("DEBUG real: width=%d decode=%p exec=%p\n", opcode_table[opcode].width, (void*)opcode_table[opcode].decode, (void*)opcode_table[opcode].execute);
+  printf("DEBUG real: width=%d decode=%p\n", opcode_table[opcode].width, (void*)opcode_table[opcode].decode);
   idex(eip, &opcode_table[opcode]);
 }
 
