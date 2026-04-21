@@ -12,6 +12,8 @@ make_EHelper(add) {
 }
 
 make_EHelper(sub) {
+  printf("DEBUG sub: id_dest->val=%08x id_src->val=%08x id_src->simm=%08x esp=%08x\n", 
+         id_dest->val, id_src->val, id_src->simm, reg_l(R_ESP));
   rtl_sub(&t2, &id_dest->val, &id_src->val);
   operand_write(id_dest, &t2);
 
