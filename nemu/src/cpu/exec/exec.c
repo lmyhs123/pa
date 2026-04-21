@@ -37,7 +37,8 @@ static make_EHelper(2byte_esc);
   }; \
 static make_EHelper(name) { \
   int idx = decoding.ext_opcode; \
-  idex(eip, &concat(opcode_table_, name)[idx]); \
+  opcode_entry *e = &concat(opcode_table_, name)[idx]; \
+  e->execute(eip); \
 }
 
 /* 0x80, 0x81, 0x83 */
