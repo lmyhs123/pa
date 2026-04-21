@@ -194,9 +194,12 @@ make_DHelper(test_I) {
 
 make_DHelper(SI2E) {
   assert(id_dest->width == 2 || id_dest->width == 4);
+  printf("DEBUG SI2E ENTRY: eip=0x%x width=%d\n", *eip, id_dest->width);
   decode_op_rm(eip, id_dest, true, NULL, false);
+  printf("DEBUG SI2E after rm: eip=0x%x\n", *eip);
   id_src->width = 1;
   decode_op_SI(eip, id_src, true);
+  printf("DEBUG SI2E after SI: eip=0x%x\n", *eip);
   if (id_dest->width == 2) {
     id_src->val &= 0xffff;
   }
