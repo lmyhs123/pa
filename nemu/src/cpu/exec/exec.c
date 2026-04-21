@@ -37,9 +37,7 @@ static make_EHelper(2byte_esc);
   }; \
 static make_EHelper(name) { \
   int idx = decoding.ext_opcode; \
-  printf("DEBUG gp1 START: idx=%d opcode=0x%02x seq_eip=0x%x\n", idx, decoding.opcode, *(uint32_t*)eip); \
   idex(eip, &concat(opcode_table_, name)[idx]); \
-  printf("DEBUG gp1 END: idx=%d\n", idx); \
 }
 
 /* 0x80, 0x81, 0x83 */
@@ -219,10 +217,8 @@ static make_EHelper(2byte_esc) {
 
 make_EHelper(real) {
   uint32_t opcode = instr_fetch(eip, 1);
-  printf("DEBUG real: opcode=0x%02x eip after fetch=0x%x\n", opcode, *eip);
   decoding.opcode = opcode;
   set_width(opcode_table[opcode].width);
-  printf("DEBUG real: table[%02x] decode=%p exec=%p\n", opcode, (void*)opcode_table[opcode].decode, (void*)opcode_table[opcode].execute);
   idex(eip, &opcode_table[opcode]);
 }
 
@@ -238,9 +234,6 @@ void exec_wrapper(bool print_flag) {
 
   decoding.seq_eip = cpu.eip;
   exec_real(&decoding.seq_eip);
-
-  printf("DEBUG after exec: seq_eip=%08x is_jmp=%d jmp_eip=%08x\n",
-         decoding.seq_eip, decoding.is_jmp, decoding.jmp_eip);
 
 #ifdef DEBUG
   int instr_len = decoding.seq_eip - cpu.eip;
