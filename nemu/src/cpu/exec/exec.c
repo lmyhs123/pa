@@ -38,6 +38,7 @@ static make_EHelper(2byte_esc);
 static make_EHelper(name) { \
   int idx = decoding.ext_opcode; \
   opcode_entry *e = &concat(opcode_table_, name)[idx]; \
+  fprintf(stderr, "[GP1] idx=%d e=%p decode=%p execute=%p\n", idx, (void*)e, (void*)e->decode, (void*)e->execute); fflush(stderr); \
   e->execute(eip); \
 }
 
@@ -218,6 +219,7 @@ static make_EHelper(2byte_esc) {
 
 make_EHelper(real) {
   uint32_t opcode = instr_fetch(eip, 1);
+  fprintf(stderr, "[EXEC] opcode=0x%02x eip=0x%x\n", opcode, *eip); fflush(stderr);
   decoding.opcode = opcode;
   set_width(opcode_table[opcode].width);
   idex(eip, &opcode_table[opcode]);
