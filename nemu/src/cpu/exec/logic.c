@@ -56,12 +56,12 @@ make_EHelper(shr) {
 }
 
 make_EHelper(setcc) {
-  uint8_t subcode = decoding.opcode & 0xf;
-  rtl_setcc(&t2, subcode);
+  rtl_setcc(&t2, decoding.opcode & 0xf);
   operand_write(id_dest, &t2);
 
-  print_asm("set%s %s", get_cc_name(subcode), id_dest->str);
+  print_asm("set%s %s", get_cc_name(decoding.opcode & 0xf), id_dest->str);
 }
+
 
 make_EHelper(not) {
   TODO();
