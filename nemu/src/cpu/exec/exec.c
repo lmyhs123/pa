@@ -46,7 +46,7 @@ static make_EHelper(name) { \
 /* 0x80, 0x81, 0x83 */
 make_group(gp1,
     EX(add), EMPTY, EMPTY, IDEX(SI2E, sub),
-    EX(and), IDEXW(I2E, sub, 1), EMPTY, EMPTY)
+    EX(and), IDEXW(I2E, sub, 1), EMPTY, EX(cmp))
 
 /* TODO: Add more instructions!!! */
 
