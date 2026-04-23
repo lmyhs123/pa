@@ -19,3 +19,4 @@ make_EHelper(cmp);
 make_EHelper(jmp);
 make_EHelper(lea);
 make_EHelper(setcc);
+make_EHelper(movzx);
