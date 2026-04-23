@@ -21,7 +21,20 @@ static inline uint32_t instr_fetch(vaddr_t *eip, int len) {
   return instr;
 }
 
-void rtl_setcc(rtlreg_t*, uint8_t);
+void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
+  switch (subcode) {
+    case 0x4:  // e, z
+      rtl_get_ZF(dest);
+      break;
+    case 0x5:  // ne, nz
+      rtl_get_ZF(dest);
+      rtl_xori(dest, dest, 1);
+      break;
+    default:
+      TODO();
+  }
+}
+
 
 static inline const char* get_cc_name(int subcode) {
   static const char *cc_name[] = {
