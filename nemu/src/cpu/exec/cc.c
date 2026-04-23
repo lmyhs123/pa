@@ -12,6 +12,6 @@ void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
       rtl_xori(dest, dest, 1);
       break;
     default:
-      TODO();
+   
   }
 }
