@@ -213,6 +213,21 @@ opcode_entry opcode_table [512] = {
 
 static make_EHelper(2byte_esc) {
   uint32_t opcode = instr_fetch(eip, 1);
+
+  // movsx: 0f be (byte->dword) and 0f bf (word->dword)
+  // Use decode_mov_E2G and exec_movsx directly
+  if (opcode == 0xbe || opcode == 0xbf) {
+    int src_width = (opcode == 0xbe) ? 1 : 2;
+    decoding.opcode = opcode | 0x100;
+    decoding.dest.width = decoding.is_operand_size_16 ? 2 : 4;
+    decoding.src.width = src_width;
+    // ModR/M byte was already fetched as 'opcode' variable above
+    // Need to call decode_mov_E2G which reads ModR/M from eip
+    decode_mov_E2G(eip);
+    exec_movsx(eip);
+    return;
+  }
+
   decoding.opcode = opcode | 0x100;
   set_width(opcode_table[decoding.opcode].width);
   idex(eip, &opcode_table[decoding.opcode]);
