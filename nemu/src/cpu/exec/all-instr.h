@@ -19,5 +19,6 @@ make_EHelper(lea);
 make_EHelper(setcc);
 make_EHelper(movzx);
 make_EHelper(test);
+make_EHelper(shr);
 make_EHelper(jcc);
 make_EHelper(inc);
