@@ -39,16 +39,16 @@ make_EHelper(or) {
   print_asm_template2(or);
 }
 
-make_EHelper(sar) {
-  TODO();
-  // unnecessary to update CF and OF in NEMU
-
-  print_asm_template2(sar);
-}
-
 make_EHelper(shl) {
-  TODO();
-  // unnecessary to update CF and OF in NEMU
+  // CF = old MSB before shift
+  rtl_msb(&t0, &id_dest->val, id_dest->width);
+  rtl_shl(&t1, &id_dest->val, &id_src->val);
+  operand_write(id_dest, &t1);
+
+  rtl_update_ZFSF(&t1, id_dest->width);
+  rtl_set_CF(&t0);
+  // OF undefined for shift count > 1; set 0 for simplicity
+  rtl_set_OF(&tzero);
 
   print_asm_template2(shl);
 }
@@ -65,6 +65,20 @@ make_EHelper(shr) {
   rtl_set_OF(&tzero);
 
   print_asm_template2(shr);
+}
+
+make_EHelper(sar) {
+  // CF = old MSB before shift
+  rtl_msb(&t0, &id_dest->val, id_dest->width);
+  rtl_sar(&t1, &id_dest->val, &id_src->val);
+  operand_write(id_dest, &t1);
+
+  rtl_update_ZFSF(&t1, id_dest->width);
+  rtl_set_CF(&t0);
+  // OF undefined for shift count > 1; set 0 for simplicity
+  rtl_set_OF(&tzero);
+
+  print_asm_template2(sar);
 }
 
 make_EHelper(setcc) {
