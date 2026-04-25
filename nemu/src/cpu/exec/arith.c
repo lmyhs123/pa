@@ -97,20 +97,24 @@ make_EHelper(neg) {
 make_EHelper(adc) {
   rtl_get_CF(&t3);  // old CF
 
+  // res = dest + src
   rtl_add(&t2, &id_dest->val, &id_src->val);
-  rtl_sltu(&t0, &t2, &id_dest->val);  // carry1
+  rtl_sltu(&t0, &t2, &id_dest->val);  // carry from dest + src
 
-  rtl_mv(&t1, &t2);
+  // res = res + old CF
+  rtl_mv(&t1, &t2);                   // save intermediate result
   rtl_add(&t2, &t2, &t3);
-  rtl_sltu(&t1, &t2, &t1);            // carry2
+  rtl_sltu(&t1, &t2, &t1);            // carry from + old CF
 
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
 
+  // final CF = carry1 || carry2
   rtl_or(&t0, &t0, &t1);
   rtl_set_CF(&t0);
 
-  rtl_add(&t1, &id_src->val, &t3);    // effective addend
+  // effective addend = src + old CF
+  rtl_add(&t1, &id_src->val, &t3);
   rtl_xor(&t0, &id_dest->val, &t1);
   rtl_not(&t0);
   rtl_xor(&t1, &id_dest->val, &t2);
@@ -120,6 +124,7 @@ make_EHelper(adc) {
 
   print_asm_template2(adc);
 }
+
 
 
 make_EHelper(sbb) {
