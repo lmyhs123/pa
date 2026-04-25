@@ -95,14 +95,12 @@ make_EHelper(neg) {
 }
 
 make_EHelper(adc) {
-  rtl_get_CF(&t3);                    // old CF
+  rtl_get_CF(&t3);  // old CF
 
-  // step1: tmp = dest + src
   rtl_add(&t2, &id_dest->val, &id_src->val);
   rtl_sltu(&t0, &t2, &id_dest->val);  // carry1
 
-  // step2: res = tmp + oldCF
-  rtl_mv(&t1, &t2);                   // save tmp
+  rtl_mv(&t1, &t2);
   rtl_add(&t2, &t2, &t3);
   rtl_sltu(&t1, &t2, &t1);            // carry2
 
@@ -112,8 +110,7 @@ make_EHelper(adc) {
   rtl_or(&t0, &t0, &t1);
   rtl_set_CF(&t0);
 
-  // effective addend = src + oldCF
-  rtl_add(&t1, &id_src->val, &t3);
+  rtl_add(&t1, &id_src->val, &t3);    // effective addend
   rtl_xor(&t0, &id_dest->val, &t1);
   rtl_not(&t0);
   rtl_xor(&t1, &id_dest->val, &t2);
@@ -125,18 +122,15 @@ make_EHelper(adc) {
 }
 
 
-
 make_EHelper(sbb) {
-  rtl_get_CF(&t3);                    // old CF
+  rtl_get_CF(&t3);  // old CF
 
-  // step1: tmp = dest - src
   rtl_sub(&t2, &id_dest->val, &id_src->val);
   rtl_sltu(&t0, &id_dest->val, &id_src->val);  // borrow1
 
-  // step2: res = tmp - oldCF
-  rtl_mv(&t1, &t2);                   // save tmp
+  rtl_mv(&t1, &t2);
   rtl_sub(&t2, &t2, &t3);
-  rtl_sltu(&t1, &t1, &t3);            // borrow2
+  rtl_sltu(&t1, &t1, &t3);                     // borrow2
 
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
@@ -144,8 +138,7 @@ make_EHelper(sbb) {
   rtl_or(&t0, &t0, &t1);
   rtl_set_CF(&t0);
 
-  // effective subtrahend = src + oldCF
-  rtl_add(&t1, &id_src->val, &t3);
+  rtl_add(&t1, &id_src->val, &t3);             // effective subtrahend
   rtl_xor(&t0, &id_dest->val, &t1);
   rtl_xor(&t1, &id_dest->val, &t2);
   rtl_and(&t0, &t0, &t1);
@@ -154,7 +147,6 @@ make_EHelper(sbb) {
 
   print_asm_template2(sbb);
 }
-
 
 make_EHelper(mul) {
   rtl_lr(&t0, R_EAX, id_dest->width);
