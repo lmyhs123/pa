@@ -35,5 +35,7 @@ make_EHelper(adc);
 make_EHelper(sbb);
 make_EHelper(cwtl);
 make_EHelper(cltd);
+make_EHelper(mul);
+make_EHelper(imul1);
 
 
