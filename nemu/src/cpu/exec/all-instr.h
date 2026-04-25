@@ -39,5 +39,6 @@ make_EHelper(mul);
 make_EHelper(imul1);
 make_EHelper(idiv);
 make_EHelper(imul2);
+make_EHelper(call_rm);
 
 
