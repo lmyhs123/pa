@@ -56,9 +56,15 @@ make_group(gp2,
     EX(shl), EX(shr), EMPTY, EX(sar))
 
   /* 0xf6, 0xf7 */
-make_group(gp3,
-    EMPTY, EMPTY, EX(not), EMPTY,
-     EX(mul), EX(imul1),  EX(div), EX(idiv))
+static opcode_entry opcode_table_gp3[8] = {
+  IDEX(test_I, test), EMPTY, EX(not), EMPTY,
+  EX(mul), EX(imul1), EX(div), EX(idiv)
+};
+
+static make_EHelper(gp3) {
+  opcode_entry *e = &opcode_table_gp3[decoding.ext_opcode];
+  idex(eip, e);
+}
 
   /* 0xfe */
 make_group(gp4,
