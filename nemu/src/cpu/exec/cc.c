@@ -27,6 +27,16 @@ case 0x6: {  // be / na
   break;
 }
 
+case 0x8:  // s
+  rtl_get_SF(dest);
+  break;
+
+
+  case 0x9:  // ns
+  rtl_get_SF(dest);
+  rtl_xori(dest, dest, 1);
+  break;
+
     default:
    
   }
