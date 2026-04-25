@@ -11,6 +11,22 @@ void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
       rtl_get_ZF(dest);
       rtl_xori(dest, dest, 1);
       break;
+      case 0x7: {  // a / nbe
+  rtl_get_CF(dest);
+  rtl_xori(dest, dest, 1);
+  rtl_get_ZF(&t0);
+  rtl_xori(&t0, &t0, 1);
+  rtl_and(dest, dest, &t0);
+  break;
+}
+
+case 0x6: {  // be / na
+  rtl_get_CF(dest);
+  rtl_get_ZF(&t0);
+  rtl_or(dest, dest, &t0);
+  break;
+}
+
     default:
    
   }
