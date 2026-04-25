@@ -95,21 +95,26 @@ make_EHelper(neg) {
 }
 
 make_EHelper(adc) {
-  rtl_get_CF(&t1);                    // old CF
-  rtl_add(&t3, &id_src->val, &t1);    // effective addend = src + CF
+  rtl_get_CF(&t3);                    // old CF
 
+  // step1: tmp = dest + src
   rtl_add(&t2, &id_dest->val, &id_src->val);
-  rtl_sltu(&t0, &t2, &id_dest->val);  // carry from dest + src
+  rtl_sltu(&t0, &t2, &id_dest->val);  // carry1
 
-  rtl_add(&t2, &t2, &t1);
-  rtl_sltu(&t1, &t2, &t3);            // carry from + old CF
-  rtl_or(&t0, &t0, &t1);
+  // step2: res = tmp + oldCF
+  rtl_mv(&t1, &t2);                   // save tmp
+  rtl_add(&t2, &t2, &t3);
+  rtl_sltu(&t1, &t2, &t1);            // carry2
 
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
+
+  rtl_or(&t0, &t0, &t1);
   rtl_set_CF(&t0);
 
-  rtl_xor(&t0, &id_dest->val, &t3);
+  // effective addend = src + oldCF
+  rtl_add(&t1, &id_src->val, &t3);
+  rtl_xor(&t0, &id_dest->val, &t1);
   rtl_not(&t0);
   rtl_xor(&t1, &id_dest->val, &t2);
   rtl_and(&t0, &t0, &t1);
@@ -122,22 +127,26 @@ make_EHelper(adc) {
 
 
 make_EHelper(sbb) {
-  rtl_get_CF(&t1);                    // old CF
-  rtl_add(&t3, &id_src->val, &t1);    // effective subtrahend = src + CF
+  rtl_get_CF(&t3);                    // old CF
 
+  // step1: tmp = dest - src
   rtl_sub(&t2, &id_dest->val, &id_src->val);
-  rtl_sltu(&t0, &id_dest->val, &t2);  // borrow from dest - src
+  rtl_sltu(&t0, &id_dest->val, &id_src->val);  // borrow1
 
-  rtl_sub(&t2, &t2, &t1);
-  rtl_sltu(&t1, &t2, &id_dest->val);  // not used directly; recalc below safer
-  rtl_sltu(&t1, &id_dest->val, &t3);  // borrow from dest - (src + CF)
-  rtl_or(&t0, &t0, &t1);
+  // step2: res = tmp - oldCF
+  rtl_mv(&t1, &t2);                   // save tmp
+  rtl_sub(&t2, &t2, &t3);
+  rtl_sltu(&t1, &t1, &t3);            // borrow2
 
   operand_write(id_dest, &t2);
   rtl_update_ZFSF(&t2, id_dest->width);
+
+  rtl_or(&t0, &t0, &t1);
   rtl_set_CF(&t0);
 
-  rtl_xor(&t0, &id_dest->val, &t3);
+  // effective subtrahend = src + oldCF
+  rtl_add(&t1, &id_src->val, &t3);
+  rtl_xor(&t0, &id_dest->val, &t1);
   rtl_xor(&t1, &id_dest->val, &t2);
   rtl_and(&t0, &t0, &t1);
   rtl_msb(&t0, &t0, id_dest->width);
@@ -145,7 +154,6 @@ make_EHelper(sbb) {
 
   print_asm_template2(sbb);
 }
-
 
 
 make_EHelper(mul) {
