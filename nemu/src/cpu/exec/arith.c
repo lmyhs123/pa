@@ -95,21 +95,21 @@ make_EHelper(neg) {
 }
 
 make_EHelper(adc) {
+  rtl_get_CF(&t1);                    // old CF
+  rtl_add(&t3, &id_src->val, &t1);    // effective addend = src + CF
+
   rtl_add(&t2, &id_dest->val, &id_src->val);
-  rtl_sltu(&t3, &t2, &id_dest->val);
+  rtl_sltu(&t0, &t2, &id_dest->val);  // carry from dest + src
 
-  rtl_get_CF(&t1);
-  rtl_mv(&t0, &t2);
   rtl_add(&t2, &t2, &t1);
+  rtl_sltu(&t1, &t2, &t3);            // carry from + old CF
+  rtl_or(&t0, &t0, &t1);
+
   operand_write(id_dest, &t2);
-
   rtl_update_ZFSF(&t2, id_dest->width);
-
-  rtl_sltu(&t1, &t2, &t0);
-  rtl_or(&t0, &t3, &t1);
   rtl_set_CF(&t0);
 
-  rtl_xor(&t0, &id_dest->val, &id_src->val);
+  rtl_xor(&t0, &id_dest->val, &t3);
   rtl_not(&t0);
   rtl_xor(&t1, &id_dest->val, &t2);
   rtl_and(&t0, &t0, &t1);
@@ -120,26 +120,24 @@ make_EHelper(adc) {
 }
 
 
+
 make_EHelper(sbb) {
-  rtl_get_CF(&t1);
+  rtl_get_CF(&t1);                    // old CF
+  rtl_add(&t3, &id_src->val, &t1);    // effective subtrahend = src + CF
 
   rtl_sub(&t2, &id_dest->val, &id_src->val);
-  rtl_sltu(&t3, &id_dest->val, &t2);
+  rtl_sltu(&t0, &id_dest->val, &t2);  // borrow from dest - src
 
-  rtl_mv(&t0, &t2);
   rtl_sub(&t2, &t2, &t1);
+  rtl_sltu(&t1, &t2, &id_dest->val);  // not used directly; recalc below safer
+  rtl_sltu(&t1, &id_dest->val, &t3);  // borrow from dest - (src + CF)
+  rtl_or(&t0, &t0, &t1);
+
   operand_write(id_dest, &t2);
-
   rtl_update_ZFSF(&t2, id_dest->width);
-
-  rtl_sltu(&t1, &t0, &t1);
-  rtl_or(&t0, &t3, &t1);
   rtl_set_CF(&t0);
 
-  rtl_get_CF(&t1);
-  rtl_sub(&t0, &tzero, &t1);
-  rtl_add(&t1, &id_src->val, &t0);
-  rtl_xor(&t0, &id_dest->val, &t1);
+  rtl_xor(&t0, &id_dest->val, &t3);
   rtl_xor(&t1, &id_dest->val, &t2);
   rtl_and(&t0, &t0, &t1);
   rtl_msb(&t0, &t0, id_dest->width);
