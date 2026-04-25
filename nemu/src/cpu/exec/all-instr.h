@@ -30,5 +30,6 @@ make_EHelper(not);
 make_EHelper(movsx);
 make_EHelper(jmp_rm);
 make_EHelper(div);
+make_EHelper(shr);
 
 
