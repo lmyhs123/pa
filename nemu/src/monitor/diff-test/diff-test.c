@@ -136,7 +136,6 @@ void difftest_step(uint32_t eip) {
   }
 
   if (is_skip_qemu) {
-    // to skip the checking of an instruction, just copy the reg state to qemu
     gdb_getregs(&r);
     regcpy_from_nemu(r);
     gdb_setregs(&r);
@@ -147,11 +146,18 @@ void difftest_step(uint32_t eip) {
   gdb_si();
   gdb_getregs(&r);
 
-  // TODO: Check the registers state with QEMU.
-  // Set `diff` as `true` if they are not the same.
-  TODO();
+  if (cpu.eax != r.eax) { Log("eax different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.eax, r.eax); diff = true; }
+  if (cpu.ecx != r.ecx) { Log("ecx different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.ecx, r.ecx); diff = true; }
+  if (cpu.edx != r.edx) { Log("edx different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.edx, r.edx); diff = true; }
+  if (cpu.ebx != r.ebx) { Log("ebx different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.ebx, r.ebx); diff = true; }
+  if (cpu.esp != r.esp) { Log("esp different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.esp, r.esp); diff = true; }
+  if (cpu.ebp != r.ebp) { Log("ebp different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.ebp, r.ebp); diff = true; }
+  if (cpu.esi != r.esi) { Log("esi different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.esi, r.esi); diff = true; }
+  if (cpu.edi != r.edi) { Log("edi different at eip = 0x%08x, nemu = 0x%08x, qemu = 0x%08x", eip, cpu.edi, r.edi); diff = true; }
+  if (cpu.eip != r.eip) { Log("eip different, nemu = 0x%08x, qemu = 0x%08x", cpu.eip, r.eip); diff = true; }
 
   if (diff) {
     nemu_state = NEMU_END;
   }
 }
+
