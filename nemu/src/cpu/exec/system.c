@@ -35,8 +35,8 @@ make_EHelper(int) {
 }
 
 make_EHelper(iret) {
-  cpu.eip = vaddr_read(cpu.esp, 4); cpu.esp += 4;
-  cpu.cs  = vaddr_read(cpu.esp, 4); cpu.esp += 4;
+  vaddr_t ret_eip = vaddr_read(cpu.esp, 4); cpu.esp += 4;
+  cpu.cs = vaddr_read(cpu.esp, 4); cpu.esp += 4;
 
   uint32_t eflags = vaddr_read(cpu.esp, 4); cpu.esp += 4;
   cpu.eflags.CF = (eflags >> 0) & 1;
@@ -45,7 +45,7 @@ make_EHelper(iret) {
   cpu.eflags.OF = (eflags >> 11) & 1;
 
   decoding.is_jmp = 1;
-  decoding.jmp_eip = cpu.eip;
+  decoding.jmp_eip = ret_eip;
 
   print_asm("iret");
 }
