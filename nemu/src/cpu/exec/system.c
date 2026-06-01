@@ -5,7 +5,8 @@ void diff_test_skip_qemu();
 void diff_test_skip_nemu();
 
 make_EHelper(lidt) {
-  TODO();
+  cpu.idtr.limit = vaddr_read(id_dest->addr, 2);
+  cpu.idtr.base = vaddr_read(id_dest->addr + 2, 4);
 
   print_asm_template1(lidt);
 }
@@ -34,7 +35,17 @@ make_EHelper(int) {
 }
 
 make_EHelper(iret) {
-  TODO();
+  cpu.eip = vaddr_read(cpu.esp, 4); cpu.esp += 4;
+  cpu.cs  = vaddr_read(cpu.esp, 4); cpu.esp += 4;
+
+  uint32_t eflags = vaddr_read(cpu.esp, 4); cpu.esp += 4;
+  cpu.eflags.CF = (eflags >> 0) & 1;
+  cpu.eflags.ZF = (eflags >> 6) & 1;
+  cpu.eflags.SF = (eflags >> 7) & 1;
+  cpu.eflags.OF = (eflags >> 11) & 1;
+
+  decoding.is_jmp = 1;
+  decoding.jmp_eip = cpu.eip;
 
   print_asm("iret");
 }

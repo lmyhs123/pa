@@ -9,6 +9,8 @@ make_EHelper(call);
 make_EHelper(ret);
 make_EHelper(push);
 make_EHelper(pop);
+make_EHelper(pusha);
+make_EHelper(popa);
 make_EHelper(xor);
 make_EHelper(sub);
 make_EHelper(add);
@@ -47,4 +49,3 @@ make_EHelper(int);
 make_EHelper(iret);
 make_EHelper(mov_r2cr);
 make_EHelper(mov_cr2r);
-
