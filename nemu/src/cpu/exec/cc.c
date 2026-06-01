@@ -4,6 +4,17 @@
 
 void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
   switch (subcode) {
+    case 0x2: {  // b / c / nae
+      rtl_get_CF(dest);
+      break;
+    }
+
+    case 0x3: {  // nb / nc / ae
+      rtl_get_CF(dest);
+      rtl_xori(dest, dest, 1);
+      break;
+    }
+
     case 0x4:  // e / z
       rtl_get_ZF(dest);
       break;
@@ -77,4 +88,3 @@ void rtl_setcc(rtlreg_t* dest, uint8_t subcode) {
       TODO();
   }
 }
-
