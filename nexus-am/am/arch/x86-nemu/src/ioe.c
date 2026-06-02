@@ -40,7 +40,7 @@ void _draw_sync() {
 #define KBD_STATUS_HASKEY 0x1
 
 int _read_key() {
-  if ((inl(KBD_STATUS_PORT) & KBD_STATUS_HASKEY) == 0) {
+  if ((inb(KBD_STATUS_PORT) & KBD_STATUS_HASKEY) == 0) {
     return _KEY_NONE;
   }
   return inl(KBD_DATA_PORT);

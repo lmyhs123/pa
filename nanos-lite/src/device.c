@@ -9,9 +9,8 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 size_t events_read(void *buf, size_t len) {
-  int key = _read_key();
-  if (key == _KEY_NONE) {
-    return 0;
+  int key;
+  while ((key = _read_key()) == _KEY_NONE) {
   }
 
   const char *type = (key & 0x8000) ? "kd" : "ku";
