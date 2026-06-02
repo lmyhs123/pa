@@ -29,6 +29,10 @@ void dispinfo_read(void *buf, off_t offset, size_t len);
 void fb_write(const void *buf, off_t offset, size_t len);
 
 int fs_open(const char *pathname, int flags, int mode) {
+  if (strcmp(pathname, "/dev/tty") == 0) {
+    return ((flags & 3) == 0) ? FD_STDIN : FD_STDOUT;
+  }
+
   for (int i = 0; i < NR_FILES; i ++) {
     if (strcmp(pathname, file_table[i].name) == 0) {
       file_table[i].open_offset = 0;
