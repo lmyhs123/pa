@@ -35,13 +35,8 @@ void _draw_rect(const uint32_t *pixels, int x, int y, int w, int h) {
 void _draw_sync() {
 }
 
-#define KBD_DATA_PORT 0x60
-#define KBD_STATUS_PORT 0x64
-#define KBD_STATUS_HASKEY 0x1
+#define KBD_PORT 0x60
 
 int _read_key() {
-  if ((inb(KBD_STATUS_PORT) & KBD_STATUS_HASKEY) == 0) {
-    return _KEY_NONE;
-  }
-  return inl(KBD_DATA_PORT);
+  return inl(KBD_PORT);
 }
