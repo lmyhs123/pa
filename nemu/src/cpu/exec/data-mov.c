@@ -107,3 +107,13 @@ make_EHelper(lea) {
   operand_write(id_dest, &t2);
   print_asm_template2(lea);
 }
+
+make_EHelper(movs) {
+  t0 = vaddr_read(cpu.esi, id_dest->width);
+  vaddr_write(cpu.edi, id_dest->width, t0);
+
+  cpu.esi += id_dest->width;
+  cpu.edi += id_dest->width;
+
+  print_asm("movs%c", suffix_char(id_dest->width));
+}
