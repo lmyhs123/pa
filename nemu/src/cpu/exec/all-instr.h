@@ -29,6 +29,7 @@ make_EHelper(dec);
 make_EHelper(or);
 make_EHelper(leave);
 make_EHelper(not);
+make_EHelper(neg);
 make_EHelper(movsx);
 make_EHelper(jmp_rm);
 make_EHelper(div);
