@@ -87,3 +87,24 @@ make_EHelper(shr) {
 
   print_asm_template2(shr);
 }
+
+make_EHelper(bsr) {
+  if (id_src->val == 0) {
+    rtl_li(&t0, 1);
+    rtl_set_ZF(&t0);
+  } else {
+    rtl_li(&t0, 0);
+    rtl_set_ZF(&t0);
+
+    uint32_t val = id_src->val;
+    int idx = id_src->width * 8 - 1;
+    while (((val >> idx) & 1) == 0) {
+      idx --;
+    }
+
+    rtl_li(&t1, idx);
+    operand_write(id_dest, &t1);
+  }
+
+  print_asm_template2(bsr);
+}
