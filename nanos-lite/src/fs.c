@@ -115,4 +115,6 @@ int fs_close(int fd) {
 
 void init_fs() {
   // TODO: initialize the size of /dev/fb
+  extern _Screen _screen;
+  file_table[FD_FB].size = _screen.width * _screen.height * sizeof(uint32_t);
 }
