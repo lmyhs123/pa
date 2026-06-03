@@ -15,17 +15,16 @@ size_t events_read(void *buf, size_t len) {
 
   if (event_pos == event_len) {
     int key = _read_key();
-    int n;
 
     if (key == _KEY_NONE) {
-      n = snprintf(event, sizeof(event), "t %lu\n", _uptime());
+      snprintf(event, sizeof(event), "t %d\n", (int)_uptime());
     } else {
       const char *type = (key & 0x8000) ? "kd" : "ku";
       int keycode = key & ~0x8000;
-      n = snprintf(event, sizeof(event), "%s %s\n", type, keyname[keycode]);
+      snprintf(event, sizeof(event), "%s %s\n", type, keyname[keycode]);
     }
 
-    event_len = n < sizeof(event) ? n : sizeof(event) - 1;
+    event_len = strlen(event);
     event_pos = 0;
   }
 
