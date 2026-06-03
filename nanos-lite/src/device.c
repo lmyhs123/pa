@@ -17,7 +17,6 @@ size_t events_read(void *buf, size_t len) {
     int key = _read_key();
     int n;
 
-    Log("events_read: key = 0x%x", key);
     if (key == _KEY_NONE) {
       n = snprintf(event, sizeof(event), "t %lu\n", _uptime());
     } else {
