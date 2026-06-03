@@ -13,7 +13,7 @@ size_t events_read(void *buf, size_t len) {
   int n;
 
   if (key == _KEY_NONE) {
-    n = snprintf(buf, len, "t %u\n", _uptime());
+    n = snprintf(buf, len, "t %lu\n", _uptime());
   } else {
     const char *type = (key & 0x8000) ? "kd" : "ku";
     int keycode = key & ~0x8000;
